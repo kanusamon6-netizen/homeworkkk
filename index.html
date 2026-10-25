@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="th" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>งานที่ฉันรัก - Dashboard & Calendar</title>
+  
+  <!-- Tailwind CSS & DaisyUI -->
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.7.2/dist/full.min.css" rel="stylesheet" type="text/css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Itim&family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- FullCalendar.js -->
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+  
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <style>
+    body {
+      font-family: 'Itim', 'Kanit', sans-serif;
+      background: radial-gradient(circle at 10% 20%, #FFFAD7 0%, #FFE6F0 50%, #E1F5FF 100%);
+      background-attachment: fixed;
+    }
+    
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.55);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+
+    @keyframes floatBounce {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-14px) scale(1.05); }
+    }
+    .cute-bounce {
+      animation: floatBounce 1.2s infinite ease-in-out;
+    }
+
+    .fc {
+      font-family: 'Itim', sans-serif;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(10px);
+      padding: 12px;
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      box-shadow: 0 20px 40px rgba(255, 182, 193, 0.15);
+    }
+
+    @media (min-width: 640px) {
+      .fc {
+        padding: 20px;
+        border-radius: 32px;
+      }
+    }
+
+    .fc-header-toolbar {
+      margin-bottom: 16px !important;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center !important;
+    }
+
+    @media (min-width: 640px) {
+      .fc-header-toolbar {
+        margin-bottom: 24px !important;
+        justify-content: space-between !important;
+      }
+    }
+
+    .fc-toolbar-title {
+      font-size: 1.2rem !important;
+      font-weight: 800 !important;
+      color: #FF6B8B !important;
+      text-align: center;
+    }
+
+    @media (min-width: 640px) {
+      .fc-toolbar-title {
+        font-size: 1.5rem !important;
+      }
+    }
+
+    .fc .fc-button {
+      background: rgba(255, 255, 255, 0.85) !important;
+      border: 1px solid rgba(255, 126, 159, 0.3) !important;
+      color: #FF7E9F !important;
+      font-weight: bold !important;
+      border-radius: 14px !important;
+      padding: 6px 12px !important;
+      font-size: 0.85rem !important;
+      transition: all 0.2s ease !important;
+      box-shadow: 0 4px 10px rgba(255, 126, 159, 0.05) !important;
+    }
+
+    @media (min-width: 640px) {
+      .fc .fc-button {
+        padding: 8px 16px !important;
+        font-size: 1rem !important;
+        border-radius: 16px !important;
+      }
+    }
+
+    .fc .fc-button:hover {
+      background: #FF7E9F !important;
+      color: #ffffff !important;
+      border-color: #FF7E9F !important;
+      transform: translateY(-2px);
+    }
+
+    .fc .fc-button-primary:not(:disabled).fc-button-active {
+      background: #FF5E84 !important;
+      color: #ffffff !important;
+      border-color: #FF5E84 !important;
+    }
+
+    .fc-col-header-cell {
+      background: rgba(255, 240, 243, 0.8) !important;
+      padding: 6px 0 !important;
+      border: none !important;
+    }
+
+    .fc-col-header-cell-cushion {
+      color: #FF6B8B !important;
+      font-weight: bold !important;
+      font-size: 0.85rem;
+      text-decoration: none !important;
+    }
+
+    @media (min-width: 640px) {
+      .fc-col-header-cell-cushion {
+        font-size: 1.05rem;
+      }
+    }
+
+    .fc-theme-standard td, .fc-theme-standard th {
+      border: 1px solid rgba(255, 173, 192, 0.15) !important;
+    }
+
+    .fc-theme-standard .fc-scrollgrid {
+      border: none !important;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .fc-daygrid-day-number {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #5d6778;
+      text-decoration: none !important;
+      padding: 4px 6px !important;
+    }
+
+    .fc-day-today {
+      background-color: rgba(255, 245, 247, 0.95) !important;
+    }
+
+    .fc-day-today .fc-daygrid-day-number {
+      background: linear-gradient(135deg, #FF7E9F 0%, #FFADC0 100%) !important;
+      color: white !important;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: inline-flex !important;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .fc-event {
+      margin: 1px 2px !important;
+      border: none !important;
+      border-radius: 8px !important;
+      padding: 2px 4px !important;
+      font-weight: 600 !important;
+      font-size: 0.7rem !important;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04) !important;
+      cursor: pointer;
+    }
+
+    @media (min-width: 640px) {
+      .fc-event {
+        margin: 2px 4px !important;
+        border-radius: 12px !important;
+        padding: 4px 8px !important;
+        font-size: 0.75rem !important;
+      }
+    }
+
+    .fc-event:hover {
+      transform: scale(1.02) !important;
+      filter: brightness(1.03);
+    }
+
+    /* Custom Fix SweetAlert Popup Buttons */
+    .swal2-styled.swal2-confirm {
+      background-color: #ff4d4d !important;
+      color: #fff !important;
+      border-radius: 12px !important;
+      padding: 8px 20px !important;
+      font-size: 14px !important;
+      font-weight: bold !important;
+    }
+    .swal2-styled.swal2-cancel {
+      background-color: #94a3b8 !important;
+      color: #fff !important;
+      border-radius: 12px !important;
+      padding: 8px 20px !important;
+      font-size: 14px !important;
+    }
+  </style>
+</head>
+<body class="min-h-screen text-slate-800 pb-12">
+
+  <!-- HEADER -->
+  <header class="navbar glass-panel sticky top-0 z-30 px-4 sm:px-6 py-3 sm:py-4 mb-4 sm:mb-6 border-b border-white/30 shadow-sm flex flex-row justify-between items-center gap-2">
+    <div class="flex items-center gap-2 sm:gap-3 min-w-0">
+      <div class="p-2 sm:p-2.5 bg-pink-400 rounded-xl sm:rounded-2xl text-white shadow-md flex-shrink-0">
+        <i data-lucide="book-open-check" class="w-5 h-5 sm:w-6 sm:h-6"></i>
+      </div>
+      <h1 class="text-lg sm:text-2xl font-black text-pink-500 tracking-tight truncate">งานที่ฉันรัก</h1>
+    </div>
+    
+    <div class="flex items-center gap-2 flex-shrink-0">
+      <button onclick="openAddTaskModal()" class="btn btn-sm sm:btn-md bg-pink-400 hover:bg-pink-500 text-white border-none rounded-full px-3 sm:px-5 shadow-md transition duration-200 hover:scale-105 text-xs sm:text-sm">
+        <i data-lucide="plus" class="w-4 h-4"></i> <span class="hidden xs:inline sm:inline">บันทึกงาน</span>
+      </button>
+
+      <button onclick="openSettingsModal()" class="btn btn-sm sm:btn-md btn-circle bg-white/80 hover:bg-white text-slate-600 border border-slate-200 shadow-sm" title="ตั้งค่าวิชาเรียน">
+        <i data-lucide="settings" class="w-4 h-4 sm:w-5 sm:h-5 text-pink-500"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-7xl mx-auto px-3 sm:px-6">
+
+    <!-- KPI CARDS -->
+    <section class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+      <div class="glass-panel p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl shadow-sm flex items-center justify-between transition duration-300 hover:translate-y-[-3px]">
+        <div class="space-y-0.5 sm:space-y-1 min-w-0">
+          <p class="text-slate-500 text-xs sm:text-sm font-medium truncate">งานทั้งหมด</p>
+          <h3 id="kpi-total" class="text-xl sm:text-3xl font-extrabold text-slate-800">0</h3>
+        </div>
+        <div class="p-2.5 sm:p-3.5 bg-blue-100 rounded-xl sm:rounded-2xl text-blue-500 flex-shrink-0">
+          <i data-lucide="book-open" class="w-5 h-5 sm:w-8 sm:h-8"></i>
+        </div>
+      </div>
+
+      <div class="glass-panel p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl shadow-sm flex items-center justify-between transition duration-300 hover:translate-y-[-3px]">
+        <div class="space-y-0.5 sm:space-y-1 min-w-0">
+          <p class="text-slate-500 text-xs sm:text-sm font-medium truncate">การบ้านทั้งหมด</p>
+          <h3 id="kpi-homework" class="text-xl sm:text-3xl font-extrabold text-pink-500">0</h3>
+        </div>
+        <div class="p-2.5 sm:p-3.5 bg-pink-100 rounded-xl sm:rounded-2xl text-pink-500 flex-shrink-0">
+          <i data-lucide="file-text" class="w-5 h-5 sm:w-8 sm:h-8"></i>
+        </div>
+      </div>
+
+      <div class="glass-panel p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl shadow-sm flex items-center justify-between transition duration-300 hover:translate-y-[-3px]">
+        <div class="space-y-0.5 sm:space-y-1 min-w-0">
+          <p class="text-slate-500 text-xs sm:text-sm font-medium truncate">วิชาสอบทั้งหมด</p>
+          <h3 id="kpi-exams" class="text-xl sm:text-3xl font-extrabold text-red-500">0</h3>
+        </div>
+        <div class="p-2.5 sm:p-3.5 bg-red-100 rounded-xl sm:rounded-2xl text-red-500 flex-shrink-0">
+          <i data-lucide="graduation-cap" class="w-5 h-5 sm:w-8 sm:h-8"></i>
+        </div>
+      </div>
+
+      <div class="glass-panel p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl shadow-sm flex items-center justify-between transition duration-300 hover:translate-y-[-3px]">
+        <div class="space-y-0.5 sm:space-y-1 min-w-0">
+          <p class="text-slate-500 text-xs sm:text-sm font-medium truncate">กำหนดวันนี้/ด่วน</p>
+          <h3 id="kpi-today" class="text-xl sm:text-3xl font-extrabold text-amber-500">0</h3>
+        </div>
+        <div class="p-2.5 sm:p-3.5 bg-amber-100 rounded-xl sm:rounded-2xl text-amber-500 flex-shrink-0">
+          <i data-lucide="alert-circle" class="w-5 h-5 sm:w-8 sm:h-8"></i>
+        </div>
+      </div>
+    </section>
+
+    <!-- CALENDAR & TASK FILTERS -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+      
+      <!-- Calendar View -->
+      <div class="lg:col-span-2 space-y-6">
+        <div class="glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-md">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 sm:mb-6">
+            <h2 class="text-lg sm:text-xl font-bold flex items-center gap-2 text-slate-800">
+              <i data-lucide="calendar" class="text-pink-500"></i> ปฏิทินรายวัน / รายสัปดาห์
+            </h2>
+            <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+              <span class="badge bg-[#ffecf5] border border-pink-200 text-[#ff5fa2] font-semibold text-xs badge-sm px-2.5 py-2 rounded-xl">📚 การบ้าน</span>
+              <span class="badge bg-[#ffebeb] border border-red-200 text-[#ff4d4d] font-semibold text-xs badge-sm px-2.5 py-2 rounded-xl">📝 สอบ</span>
+            </div>
+          </div>
+          <div id="calendar-container" class="overflow-x-auto">
+            <div id="calendar" class="min-w-[300px]"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filters & Upcoming List -->
+      <div class="space-y-6">
+        
+        <div class="glass-panel p-6 rounded-3xl shadow-md space-y-4">
+          <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+            <i data-lucide="sliders-horizontal" class="text-slate-600"></i> ตัวกรองข้อมูลงาน
+          </h3>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="form-control">
+              <label class="label-text mb-1 text-slate-500 font-medium">วิชาเรียน</label>
+              <select id="filter-subject" onchange="filterAndRenderTasks()" class="select select-sm select-bordered rounded-xl bg-white/80 focus:outline-none focus:border-pink-400">
+                <option value="all">ทุกวิชา</option>
+              </select>
+            </div>
+            <div class="form-control">
+              <label class="label-text mb-1 text-slate-500 font-medium">ประเภท</label>
+              <select id="filter-type" onchange="filterAndRenderTasks()" class="select select-sm select-bordered rounded-xl bg-white/80 focus:outline-none focus:border-pink-400">
+                <option value="all">ทั้งหมด</option>
+                <option value="การบ้าน">การบ้าน</option>
+                <option value="สอบ">สอบ</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-panel p-6 rounded-3xl shadow-md space-y-4">
+          <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+            <i data-lucide="list-todo" class="text-pink-500"></i> งานสำคัญที่ใกล้จะถึงกำหนด
+          </h3>
+          <div id="latest-tasks-list" class="space-y-3 max-h-[420px] overflow-y-auto pr-1">
+            <div class="text-center py-4 text-slate-400 text-sm">ยังไม่มีข้อมูลงานในช่วงนี้</div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- MODALS -->
+  
+  <!-- 1. Settings Modal -->
+  <dialog id="settings-modal" class="modal">
+    <div class="modal-box glass-panel max-w-md rounded-3xl p-6 border border-white/50 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-pink-100 pb-3 mb-4">
+        <h3 class="text-xl font-bold text-pink-500 flex items-center gap-2">
+          <i data-lucide="settings" class="w-5 h-5"></i> จัดการรายวิชาเรียน
+        </h3>
+        <button onclick="document.getElementById('settings-modal').close()" class="btn btn-sm btn-circle btn-ghost text-slate-400">✕</button>
+      </div>
+
+      <form onsubmit="handleAddSubject(event)" class="flex gap-2 mb-4">
+        <input type="text" id="new-subject-input" required placeholder="พิมพ์ชื่อวิชาใหม่ที่นี่..." class="input input-bordered input-sm rounded-xl bg-white/80 w-full focus:outline-none focus:border-pink-400">
+        <button type="submit" class="btn btn-sm bg-pink-400 hover:bg-pink-500 text-white rounded-xl border-none font-bold px-4">
+          <i data-lucide="plus" class="w-4 h-4"></i> เพิ่ม
+        </button>
+      </form>
+
+      <p class="text-xs text-slate-500 font-medium mb-2">รายวิชาเรียนปัจจุบันในระบบ:</p>
+      <div id="subject-list-box" class="space-y-2 max-h-60 overflow-y-auto pr-1"></div>
+    </div>
+  </dialog>
+
+  <!-- 2. Loading Modal -->
+  <dialog id="loading-modal" class="modal bg-black/30 backdrop-blur-sm">
+    <div class="modal-box glass-panel max-w-xs rounded-3xl p-6 text-center shadow-2xl border border-white/60 flex flex-col items-center">
+      <div class="w-20 h-20 bg-pink-100 text-pink-500 rounded-full flex items-center justify-center cute-bounce shadow-lg mb-4 border-2 border-pink-300">
+        <i data-lucide="sparkles" class="w-10 h-10"></i>
+      </div>
+      <h3 id="loading-msg" class="text-lg font-bold text-pink-500 mb-1">กำลังบันทึกข้อมูล... 🎀</h3>
+      <p class="text-xs text-slate-500">อดใจรอสักครู่นะคะ น้องกำลังจัดการให้อยู่ค่ะ ✨</p>
+      <div class="loading loading-dots loading-md text-pink-400 mt-3"></div>
+    </div>
+  </dialog>
+
+  <!-- 3. Task Detail Modal -->
+  <dialog id="task-detail-modal" class="modal">
+    <div class="modal-box glass-panel max-w-md rounded-3xl p-6 border border-white/50 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-pink-100 pb-3 mb-4">
+        <span id="detail-type-badge" class="badge badge-lg border-none text-white font-bold">ประเภท</span>
+        <div class="flex items-center gap-1">
+          <button onclick="editTaskFromDetail()" class="btn btn-sm btn-ghost circle text-slate-500 hover:text-pink-500" title="แก้ไข">
+            <i data-lucide="edit-3" class="w-4 h-4"></i>
+          </button>
+          <button onclick="deleteTaskFromDetail()" class="btn btn-sm btn-ghost circle text-slate-500 hover:text-red-500" title="ลบ">
+            <i data-lucide="trash-2" class="w-4 h-4 text-red-500"></i>
+          </button>
+          <button onclick="document.getElementById('task-detail-modal').close()" class="btn btn-sm btn-circle btn-ghost text-slate-400">✕</button>
+        </div>
+      </div>
+      
+      <div class="space-y-4">
+        <div>
+          <p id="detail-subject" class="text-xs font-bold text-pink-500 uppercase tracking-wider">วิชาเรียน</p>
+          <h2 id="detail-title" class="text-2xl font-bold text-slate-800 mt-0.5">หัวข้อวิชาเรียน</h2>
+        </div>
+
+        <div class="flex justify-between items-center bg-white/60 p-3.5 rounded-2xl border border-white/40 text-sm shadow-sm">
+          <span class="flex items-center gap-1.5 text-slate-500 font-medium">
+            <i data-lucide="calendar" class="w-4 h-4 text-pink-400"></i> กำหนดส่ง/สอบ:
+          </span>
+          <span id="detail-deadline" class="font-bold text-slate-700">-</span>
+        </div>
+
+        <div class="collapse collapse-arrow bg-white/45 border border-white/35 rounded-2xl shadow-sm">
+          <input type="checkbox" id="detail-expand-toggle" checked /> 
+          <div class="collapse-title text-sm font-bold text-slate-600 flex items-center gap-2 py-3 px-4">
+            <i data-lucide="info" class="w-4 h-4 text-pink-500"></i> ดูรายละเอียดและรูปภาพเพิ่มเติม
+          </div>
+          <div class="collapse-content space-y-4 pt-2">
+            <div class="bg-white/80 p-3.5 rounded-2xl border border-slate-100">
+              <p class="text-xs text-slate-400 font-semibold mb-1">รายละเอียดงาน</p>
+              <div id="detail-desc" class="text-slate-600 text-sm whitespace-pre-wrap leading-relaxed">รายละเอียดเพิ่มเติม...</div>
+            </div>
+
+            <div id="detail-image-box" class="hidden">
+              <p class="text-xs text-slate-400 font-semibold mb-1.5">รูปแนบประกอบ (<span id="detail-img-count">0</span>)</p>
+              <div id="detail-img-gallery" class="grid grid-cols-2 gap-2 max-h-56 overflow-y-auto pr-1"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- 4. Add/Edit Task Form Modal -->
+  <dialog id="task-form-modal" class="modal">
+    <div class="modal-box glass-panel max-w-md rounded-3xl p-6 border border-white/50 shadow-2xl">
+      <h3 id="form-title" class="text-xl font-bold text-pink-500 flex items-center gap-2 mb-4">
+        <i data-lucide="edit-2"></i> บันทึกข้อมูล
+      </h3>
+      
+      <form id="task-form" onsubmit="handleFormSubmit(event)" class="space-y-4">
+        <input type="hidden" id="task-id">
+        
+        <div class="form-control">
+          <label class="label-text font-semibold text-slate-600 mb-1">ประเภทงาน</label>
+          <select id="task-type" class="select select-bordered rounded-xl bg-white/80 w-full focus:outline-none focus:border-pink-400" onchange="adjustDeadlineLabel()">
+            <option value="การบ้าน">การบ้าน</option>
+            <option value="สอบ">สอบ</option>
+          </select>
+        </div>
+
+        <div class="form-control">
+          <label class="label-text font-semibold text-slate-600 mb-1">วิชาเรียน</label>
+          <select id="task-subject" required class="select select-bordered rounded-xl bg-white/80 w-full focus:outline-none focus:border-pink-400">
+            <option value="" disabled selected>เลือกวิชาเรียน</option>
+          </select>
+        </div>
+
+        <div class="form-control">
+          <label class="label-text font-semibold text-slate-600 mb-1">หัวข้อ / คำอธิบายงานแบบสั้น</label>
+          <input type="text" id="task-title" required placeholder="เช่น แบบฝึกหัดบทที่ 3 หน้า 42" class="input input-bordered rounded-xl bg-white/80 w-full focus:outline-none focus:border-pink-400">
+        </div>
+
+        <div class="form-control">
+          <label class="label-text font-semibold text-slate-600 mb-1">รายละเอียดเพิ่มเติม</label>
+          <textarea id="task-detail" placeholder="เช่น ส่งที่โต๊ะครูสมบูรณ์ ก่อนคาบเรียนที่ 3" class="textarea textarea-bordered rounded-xl bg-white/80 w-full h-20 focus:outline-none focus:border-pink-400"></textarea>
+        </div>
+
+        <div class="form-control">
+          <label id="task-deadline-label" class="label-text font-semibold text-slate-600 mb-1">กำหนดส่งงาน</label>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <span class="text-xs text-slate-500 mb-0.5 block">วันที่</span>
+              <input type="date" id="task-deadline" required class="input input-bordered rounded-xl bg-white/80 w-full focus:outline-none focus:border-pink-400">
+            </div>
+            <div>
+              <span class="text-xs text-slate-500 mb-0.5 block">เวลา (ไม่ระบุ = ทั้งวัน)</span>
+              <input type="time" id="task-time" class="input input-bordered rounded-xl bg-white/80 w-full focus:outline-none focus:border-pink-400">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-control">
+          <label class="label-text font-semibold text-slate-600 mb-1">แนบรูปภาพประกอบ (เลือกหลายรูปพร้อมกันได้)</label>
+          <input type="file" id="task-image" accept="image/*" multiple onchange="handleMultipleFileSelect(event)" class="file-input file-input-bordered file-input-pink rounded-xl bg-white/80 w-full text-xs">
+          
+          <div id="form-img-preview-box" class="hidden mt-2">
+            <p class="text-[11px] text-pink-500 font-semibold mb-1">ภาพที่เลือกพร้อมแนบ:</p>
+            <div id="form-img-previews" class="flex gap-2 overflow-x-auto py-1"></div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 mt-6">
+          <button type="button" onclick="document.getElementById('task-form-modal').close()" class="btn btn-outline border-slate-300 rounded-xl">ยกเลิก</button>
+          <button type="submit" id="form-submit-btn" class="btn bg-pink-400 hover:bg-pink-500 border-none text-white rounded-xl shadow-md">บันทึกงาน ✨</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    let SUBJECTS = [
+      "ภาษาไทย", "คณิตศาสตร์", "เทคโนโลยีหุ่นยนต์", "วิทยาศาสตร์กายภาพ", "ภูมิศาสตร์", 
+      "พระพุทธศาสนา", "สุขศึกษา", "ดนตรี", "ภาษาอังกฤษหลัก", "คณิตเข้มข้น", "ฟิสิกส์", 
+      "เคมี", "ชีวะ", "ภาษาอังกฤษอ่านเขียน", "สนทนาภาษาอังกฤษ", "พลศึกษา", "is", 
+      "จีน,ญี่ปุ่น", "เลือกเสรี", "แนะแนว", "อื่นๆ"
+    ];
+
+    let DEMO_TASKS = [
+      { id: 1, type: "การบ้าน", subject: "คณิตศาสตร์", title: "แบบฝึกหัดหน้า 45-50", detail: "ส่งก่อนวันพุธที่โต๊ะคุณครูวิทยา", deadline: getOffsetDateString(2), time: "16:30", image_urls: [] },
+      { id: 2, type: "สอบ", subject: "ฟิสิกส์", title: "สอบเก็บคะแนนบทที่ 2", detail: "เตรียมเครื่องคำนวณและดินสอ 2B มาด้วยนะครับ", deadline: getOffsetDateString(4), time: "09:00", image_urls: [] },
+      { id: 3, type: "การบ้าน", subject: "เทคโนโลยีหุ่นยนต์", title: "เขียนรายงานทดลองการต่อมอเตอร์", detail: "ส่งไฟล์ PDF ในห้อง Google Classroom เท่านั้น", deadline: getOffsetDateString(0), time: "", image_urls: [] }
+    ];
+
+    // 🔗 วาง Web App URL ที่ได้จาก Google Apps Script Deploy ที่นี่
+    let SHEET_URL = 'https://script.google.com/macros/s/AKfycbyn0hhH35ppDaDJQAJahO-V_FxZCEbOYsVmTRA6D2Hiks8dhwaEH25eFMd8m5xv9otm/exec';
+
+    let cachedTasks = [];
+    let calendarObj = null;
+    let currentViewingTaskId = null;
+    let selectedFormImages = [];
+
+    document.addEventListener("DOMContentLoaded", function() {
+      lucide.createIcons();
+      populateSubjectDropdowns();
+      initializeCalendar();
+      loadAllSystemData();
+    });
+
+    function getOffsetDateString(days) {
+      const d = new Date();
+      d.setDate(d.getDate() + days);
+      return d.toISOString().split('T')[0];
+    }
+
+    function populateSubjectDropdowns() {
+      const filterSub = document.getElementById("filter-subject");
+      const formSub = document.getElementById("task-subject");
+      
+      const prevFilterVal = filterSub.value;
+      const prevFormVal = formSub.value;
+
+      filterSub.innerHTML = '<option value="all">ทุกวิชา</option>';
+      formSub.innerHTML = '<option value="" disabled selected>เลือกวิชาเรียน</option>';
+      
+      SUBJECTS.forEach(sub => {
+        const opt1 = document.createElement("option");
+        opt1.value = sub;
+        opt1.textContent = sub;
+        filterSub.appendChild(opt1);
+
+        const opt2 = document.createElement("option");
+        opt2.value = sub;
+        opt2.textContent = sub;
+        formSub.appendChild(opt2);
+      });
+
+      if (SUBJECTS.includes(prevFilterVal)) filterSub.value = prevFilterVal;
+      if (SUBJECTS.includes(prevFormVal)) formSub.value = prevFormVal;
+    }
+
+    function openSettingsModal() {
+      renderSubjectSettingsList();
+      document.getElementById("settings-modal").showModal();
+    }
+
+    function renderSubjectSettingsList() {
+      const container = document.getElementById("subject-list-box");
+      container.innerHTML = "";
+
+      SUBJECTS.forEach((sub, index) => {
+        container.innerHTML += `
+          <div class="flex items-center justify-between p-2.5 bg-white/70 border border-slate-100 rounded-xl shadow-sm">
+            <span class="font-medium text-slate-700 text-sm flex items-center gap-2">
+              <i data-lucide="book" class="w-4 h-4 text-pink-400"></i> ${sub}
+            </span>
+            <button onclick="handleDeleteSubject(${index})" class="btn btn-xs btn-ghost text-red-400 hover:text-red-600 circle" title="ลบวิชานี้">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
+          </div>
+        `;
+      });
+      lucide.createIcons();
+    }
+
+    function handleAddSubject(e) {
+      e.preventDefault();
+      const input = document.getElementById("new-subject-input");
+      const val = input.value.trim();
+      if (val && !SUBJECTS.includes(val)) {
+        SUBJECTS.push(val);
+        input.value = "";
+        populateSubjectDropdowns();
+        renderSubjectSettingsList();
+        ToastSuccess("เพิ่มรายวิชาใหม่เรียบร้อย ✨");
+      }
+    }
+
+    function handleDeleteSubject(index) {
+      if (SUBJECTS.length <= 1) {
+        Swal.fire({ icon: 'error', title: 'ไม่สามารถลบได้', text: 'ต้องมีรายวิชาอย่างน้อย 1 วิชาในระบบครับ' });
+        return;
+      }
+      SUBJECTS.splice(index, 1);
+      populateSubjectDropdowns();
+      renderSubjectSettingsList();
+      ToastSuccess("ลบรายวิชาเรียบร้อยแล้ว");
+    }
+
+    function initializeCalendar() {
+      const calendarEl = document.getElementById('calendar');
+      calendarObj = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        locale: 'th',
+        firstDay: 1, 
+        headerToolbar: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridMonth,timeGridWeek'
+        },
+        buttonText: {
+          today: 'วันนี้',
+          month: 'รายเดือน',
+          week: 'รายสัปดาห์'
+        },
+        fixedWeekCount: false, 
+        editable: false,
+        selectable: true,
+        events: [],
+        eventClick: function(info) {
+          openTaskDetailModal(info.event.id);
+        }
+      });
+      calendarObj.render();
+    }
+
+    async function loadAllSystemData() {
+      cachedTasks = [...DEMO_TASKS];
+      autoCleanExpiredTasks();
+      processAndRenderUI();
+    }
+
+    function autoCleanExpiredTasks() {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      DEMO_TASKS = DEMO_TASKS.filter(task => {
+        if (!task.deadline) return true;
+        const taskDeadline = new Date(task.deadline);
+        taskDeadline.setHours(0, 0, 0, 0);
+        const diffDays = Math.floor((today - taskDeadline) / (1000 * 60 * 60 * 24));
+        return diffDays <= 7;
+      });
+
+      cachedTasks = [...DEMO_TASKS];
+    }
+
+    function processAndRenderUI() {
+      const todayStr = getOffsetDateString(0);
+      
+      let totalCount = cachedTasks.length;
+      let homeworkCount = 0;
+      let examCount = 0;
+      let todayCount = 0;
+
+      cachedTasks.forEach(task => {
+        if (task.type === 'สอบ') examCount++;
+        if (task.type === 'การบ้าน') homeworkCount++;
+        if (task.deadline === todayStr) todayCount++;
+      });
+
+      document.getElementById("kpi-total").textContent = totalCount;
+      document.getElementById("kpi-homework").textContent = homeworkCount;
+      document.getElementById("kpi-exams").textContent = examCount;
+      document.getElementById("kpi-today").textContent = todayCount;
+
+      renderCalendarEvents();
+      filterAndRenderTasks();
+    }
+
+    function renderCalendarEvents() {
+      if (!calendarObj) return;
+      
+      const events = cachedTasks.map(task => {
+        let color = '#FFADC0'; 
+        let textColor = '#C73E62';
+        let emoji = '📚';
+        
+        if (task.type === 'สอบ') {
+          color = '#FFD09B'; 
+          textColor = '#A65300';
+          emoji = '📝';
+        }
+
+        const timeStr = task.time ? ` ⏰ ${task.time}` : ' (ทั้งวัน)';
+
+        return {
+          id: task.id.toString(),
+          title: `${emoji} ${task.subject}: ${task.title}${timeStr}`,
+          start: task.time ? `${task.deadline}T${task.time}:00` : task.deadline,
+          allDay: !task.time,
+          color: color,
+          textColor: textColor
+        };
+      });
+
+      calendarObj.removeAllEvents();
+      calendarObj.addEventSource(events);
+    }
+
+    function filterAndRenderTasks() {
+      const subFilter = document.getElementById("filter-subject").value;
+      const typeFilter = document.getElementById("filter-type").value;
+      const container = document.getElementById("latest-tasks-list");
+      
+      let filtered = cachedTasks.filter(task => {
+        const matchesSub = subFilter === 'all' || task.subject === subFilter;
+        const matchesType = typeFilter === 'all' || task.type === typeFilter;
+        return matchesSub && matchesType;
+      });
+
+      filtered.sort((a, b) => {
+        const dateA = new Date(`${a.deadline}T${a.time || '23:59'}`);
+        const dateB = new Date(`${b.deadline}T${b.time || '23:59'}`);
+        return dateA - dateB;
+      });
+      const displayTasks = filtered.slice(0, 6);
+
+      if (displayTasks.length === 0) {
+        container.innerHTML = '<div class="text-center py-8 text-slate-400 text-sm">ไม่พบวิชาหรือประเภทงานที่ต้องการ 🌈</div>';
+        return;
+      }
+
+      container.innerHTML = "";
+      displayTasks.forEach(task => {
+        const deadlineDate = new Date(task.deadline);
+        deadlineDate.setHours(0,0,0,0);
+        const today = new Date();
+        today.setHours(0,0,0,0);
+        const timeDiff = deadlineDate - today;
+        const daysLeft = Math.round(timeDiff / (1000 * 60 * 60 * 24));
+
+        let statusText = "";
+        let badgeClass = "";
+        
+        if (daysLeft < 0) {
+          statusText = "เลยกำหนด";
+          badgeClass = "bg-rose-100 text-rose-600";
+        } else if (daysLeft === 0) {
+          statusText = "ส่งวันนี้ 🔥";
+          badgeClass = "bg-amber-100 text-amber-700 font-bold";
+        } else if (daysLeft === 1) {
+          statusText = "ส่งพรุ่งนี้";
+          badgeClass = "bg-yellow-100 text-yellow-700";
+        } else {
+          statusText = `อีก ${daysLeft} วัน`;
+          badgeClass = "bg-blue-100 text-blue-700";
+        }
+
+        const timeDisplay = task.time ? `เวลา ${task.time} น.` : 'ส่งได้ทั้งวัน';
+        const imgBadge = (task.image_urls && task.image_urls.length > 0) ? `<i data-lucide="image" class="w-3.5 h-3.5 text-pink-400 inline"></i>` : '';
+
+        container.innerHTML += `
+          <div onclick="openTaskDetailModal(${task.id})" class="p-3.5 bg-white/60 hover:bg-white/90 border border-white/40 rounded-2xl shadow-sm transition duration-300 hover:translate-y-[-2px] hover:shadow-md flex items-center justify-between gap-3 cursor-pointer">
+            <div class="space-y-0.5 min-w-0 flex-1">
+              <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400">${task.subject} ${imgBadge}</span>
+              <h4 class="font-bold text-slate-800 text-sm truncate">${task.title}</h4>
+              <p class="text-xs text-slate-500 flex items-center gap-1">
+                <i data-lucide="clock" class="w-3.5 h-3.5 text-pink-400"></i> ${task.deadline} (${timeDisplay})
+              </p>
+            </div>
+
+            <div class="flex flex-col items-end gap-1.5 flex-shrink-0">
+              <span class="badge badge-sm border-none ${badgeClass} text-[10px] py-1.5 px-2.5 rounded-lg">${statusText}</span>
+            </div>
+          </div>
+        `;
+      });
+      lucide.createIcons();
+    }
+
+    function openTaskDetailModal(id) {
+      currentViewingTaskId = id;
+      const task = cachedTasks.find(t => t.id == id);
+      if (!task) return;
+
+      const typeBadge = document.getElementById("detail-type-badge");
+      typeBadge.textContent = task.type;
+      typeBadge.className = task.type === 'สอบ' ? 
+        "badge badge-lg bg-[#ff4d4d] border-none text-white font-bold" : 
+        "badge badge-lg bg-[#ff94d1] border-none text-white font-bold";
+
+      document.getElementById("detail-subject").textContent = task.subject;
+      document.getElementById("detail-title").textContent = task.title;
+      
+      const timeDisplay = task.time ? ` เวลา ${task.time} น.` : ' (ส่งได้ทั้งวัน)';
+      document.getElementById("detail-deadline").textContent = `${task.deadline}${timeDisplay}`;
+      document.getElementById("detail-desc").textContent = task.detail || "ไม่มีรายละเอียดอื่นระบุเพิ่มเติมจ้า";
+
+      const imgBox = document.getElementById("detail-image-box");
+      const imgGallery = document.getElementById("detail-img-gallery");
+      const imgCount = document.getElementById("detail-img-count");
+
+      imgGallery.innerHTML = "";
+      const imgs = task.image_urls || (task.image_url ? [task.image_url] : []);
+      
+      if (imgs.length > 0) {
+        imgCount.textContent = imgs.length;
+        imgs.forEach(url => {
+          imgGallery.innerHTML += `
+            <div class="relative group rounded-xl overflow-hidden shadow-sm border border-pink-100">
+              <img src="${url}" class="w-full h-28 object-cover">
+              <button type="button" onclick="openSingleImageWindow('${url}')" class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition duration-200 flex items-center justify-center text-white text-xs font-semibold gap-1">
+                <i data-lucide="external-link" class="w-3.5 h-3.5"></i> ดูรูปใหญ่
+              </button>
+            </div>
+          `;
+        });
+        imgBox.classList.remove("hidden");
+      } else {
+        imgBox.classList.add("hidden");
+      }
+
+      lucide.createIcons();
+      document.getElementById("task-detail-modal").showModal();
+    }
+
+    function openSingleImageWindow(url) {
+      window.open(url, '_blank');
+    }
+
+    function adjustDeadlineLabel() {
+      const type = document.getElementById("task-type").value;
+      document.getElementById("task-deadline-label").textContent = type === 'สอบ' ? 'วันที่สอบ' : 'กำหนดส่งงาน';
+    }
+
+    function openAddTaskModal() {
+      document.getElementById("task-form").reset();
+      document.getElementById("task-id").value = "";
+      document.getElementById("task-time").value = "";
+      selectedFormImages = [];
+      renderFormImagePreviews();
+      document.getElementById("form-title").textContent = "➕ เพิ่มการบ้าน/การสอบใหม่";
+      document.getElementById("form-submit-btn").textContent = "บันทึก✨";
+      adjustDeadlineLabel();
+      document.getElementById("task-form-modal").showModal();
+    }
+
+    async function handleMultipleFileSelect(event) {
+      const files = Array.from(event.target.files);
+      for (const file of files) {
+        try {
+          const base64 = await convertFileToBase64(file);
+          selectedFormImages.push(base64);
+        } catch (e) {
+          console.error("Error reading file:", e);
+        }
+      }
+      renderFormImagePreviews();
+    }
+
+    function convertFileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+      });
+    }
+
+    function renderFormImagePreviews() {
+      const box = document.getElementById("form-img-preview-box");
+      const container = document.getElementById("form-img-previews");
+      container.innerHTML = "";
+
+      if (selectedFormImages.length > 0) {
+        selectedFormImages.forEach((url, idx) => {
+          container.innerHTML += `
+            <div class="relative flex-shrink-0 w-16 h-16 rounded-xl overflow-hidden border border-pink-200 group">
+              <img src="${url}" class="w-full h-full object-cover">
+              <button type="button" onclick="removeFormImage(${idx})" class="absolute top-0.5 right-0.5 bg-red-500 text-white rounded-full p-0.5 shadow hover:scale-110">
+                <i data-lucide="x" class="w-3 h-3"></i>
+              </button>
+            </div>
+          `;
+        });
+        box.classList.remove("hidden");
+        lucide.createIcons();
+      } else {
+        box.classList.add("hidden");
+      }
+    }
+
+    function removeFormImage(idx) {
+      selectedFormImages.splice(idx, 1);
+      renderFormImagePreviews();
+    }
+
+    async function handleFormSubmit(e) {
+      e.preventDefault();
+
+      const taskId = document.getElementById("task-id").value;
+      const type = document.getElementById("task-type").value;
+      const subject = document.getElementById("task-subject").value;
+      const title = document.getElementById("task-title").value.trim();
+      const detail = document.getElementById("task-detail").value.trim();
+      const deadline = document.getElementById("task-deadline").value;
+      const time = document.getElementById("task-time").value;
+
+      document.getElementById("loading-msg").textContent = "กำลังบันทึกข้อมูล... 🎀";
+      const loadingModal = document.getElementById("loading-modal");
+      loadingModal.showModal();
+
+      const payload = { 
+        id: taskId || Date.now(),
+        type, 
+        subject, 
+        title, 
+        detail, 
+        deadline,
+        time,
+        image_urls: [...selectedFormImages] 
+      };
+
+      if (SHEET_URL && SHEET_URL.trim() !== '') {
+        try {
+          await fetch(SHEET_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(payload)
+          });
+        } catch (err) {
+          console.error('ไม่สามารถส่งข้อมูลไปยัง Google Sheet ได้:', err);
+        }
+      }
+
+      if (taskId) {
+        const idx = DEMO_TASKS.findIndex(t => t.id == taskId);
+        if (idx > -1) DEMO_TASKS[idx] = { ...DEMO_TASKS[idx], ...payload };
+      } else {
+        DEMO_TASKS.push(payload);
+      }
+
+      loadingModal.close();
+      document.getElementById("task-form-modal").close();
+      ToastSuccess('บันทึกข้อมูลเรียบร้อยแล้ว ✨');
+      loadAllSystemData();
+    }
+
+    function editTaskFromDetail() {
+      const task = cachedTasks.find(t => t.id == currentViewingTaskId);
+      if (!task) return;
+
+      document.getElementById("task-id").value = task.id;
+      document.getElementById("task-type").value = task.type;
+      document.getElementById("task-subject").value = task.subject;
+      document.getElementById("task-title").value = task.title;
+      document.getElementById("task-detail").value = task.detail;
+      document.getElementById("task-deadline").value = task.deadline;
+      document.getElementById("task-time").value = task.time || "";
+      
+      selectedFormImages = task.image_urls ? [...task.image_urls] : (task.image_url ? [task.image_url] : []);
+      renderFormImagePreviews();
+
+      document.getElementById("form-title").textContent = "✏️ แก้ไขข้อมูลการบ้าน / การสอบ";
+      document.getElementById("form-submit-btn").textContent = "บันทึกการปรับปรุง";
+      adjustDeadlineLabel();
+
+      document.getElementById("task-detail-modal").close();
+      document.getElementById("task-form-modal").showModal();
+    }
+
+    // 🔴 🗑️ ฟังก์ชันลบรายการงาน (แก้ไขให้ปุ่มใน SweetAlert ปรากฏแน่นอน + ลบข้อมูลออกจาก Sheet)
+    async function deleteTaskFromDetail() {
+      const targetId = currentViewingTaskId;
+      
+      const result = await Swal.fire({
+        title: 'ยืนยันการลบงาน?',
+        text: "คุณต้องการลบรายการนี้ใช่หรือไม่ ข้อมูลจะถูกลบทันที!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'ลบรายการ',
+        cancelButtonText: 'ยกเลิก',
+        confirmButtonColor: '#ff4d4d',
+        cancelButtonColor: '#94a3b8',
+        customClass: {
+          confirmButton: 'btn bg-red-500 hover:bg-red-600 text-white border-none mx-1 px-4 py-2 rounded-xl',
+          cancelButton: 'btn bg-slate-400 hover:bg-slate-500 text-white border-none mx-1 px-4 py-2 rounded-xl'
+        },
+        buttonsStyling: false
+      });
+
+      if (result.isConfirmed) {
+        document.getElementById("task-detail-modal").close();
+
+        // 📤 ส่งคำสั่งลบไปยัง Google Sheet
+        if (SHEET_URL && SHEET_URL.trim() !== '') {
+          document.getElementById("loading-msg").textContent = "กำลังลบข้อมูล... 🗑️";
+          document.getElementById("loading-modal").showModal();
+
+          try {
+            await fetch(SHEET_URL, {
+              method: 'POST',
+              mode: 'no-cors',
+              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+              body: JSON.stringify({ action: "delete", id: targetId })
+            });
+          } catch (err) {
+            console.error('ไม่สามารถลบข้อมูลจาก Google Sheet ได้:', err);
+          }
+          document.getElementById("loading-modal").close();
+        }
+
+        // ลบออกจากตัวแปรในหน้าเว็บ
+        DEMO_TASKS = DEMO_TASKS.filter(t => t.id != targetId);
+        cachedTasks = cachedTasks.filter(t => t.id != targetId);
+
+        ToastSuccess("ลบรายการงานเรียบร้อยแล้ว ✨");
+        loadAllSystemData();
+      }
+    }
+
+    function ToastSuccess(message) {
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: message,
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true
+      });
+    }
+  </script>
+</body>
+</html>
